@@ -3,6 +3,9 @@ module IPTC
 
   # a MultipleHash associate a String key, a Marker Object and a String value
   # this object 
+	
+
+	# This structure is too complicated.
   class MultipleHash
     def initialize()
       @internal = Hash.new

@@ -12,7 +12,7 @@ module IPTC
       def initialize filename, quick=true
         @logger = Logger.new(STDOUT)
         @logger.datetime_format = "%H:%M:%S"
-        @logger.level = $DEBUG?(Logger::DEBUG):(Logger::INFO)
+        @logger.level = Logger::DEBUG # $DEBUG?(Logger::DEBUG):(Logger::INFO)
       
         @filename = filename
         @position = 0
@@ -94,6 +94,10 @@ module IPTC
         rest = @content[@position..-1]
         return Marker.new("BIN",rest)
       end
+			def to_s
+				"Image #{@filename}:\n" +
+				@markers.map{ |m| m.to_s  }.join("\n")
+			end
     
     end
   end

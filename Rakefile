@@ -18,3 +18,11 @@ file "#{gemspec.full_name}.gem" => gemspec.files + ["iptc.gemspec"] do
   system "gem build iptc.gemspec"
   system "gem install iptc-#{IPTC::VERSION}.gem"
 end
+
+desc 'Benchmark marker loading'
+task :benchmark_loading do
+	$: << 'lib'
+	require 'iptc'
+	IPTC::MarkerNomenclature.instance.benchmark
+	
+end
