@@ -1,5 +1,6 @@
 require 'singleton'
 require 'iptc/marker'
+require 'iptc/marker_nomenclature_data'
 
 require 'yaml'
 

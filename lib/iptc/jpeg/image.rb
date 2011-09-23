@@ -7,6 +7,10 @@ module IPTC
   module JPEG
     class Image
       attr_reader :values
+      def initialize_from_blob blob, quick=true
+        
+
+      end
       # creates a JPEG image from a file and does a "quick" load (Only the metadata
       # are loaded, not the whole file).
       def initialize filename, quick=true
