@@ -14,7 +14,7 @@ module IPTC
           # Inspect the object space in order to find something usable later
           def Marker.NewMarker(type,data, logger)
             marker_class = "#{type}Marker"
-              if JPEG::Markers.constants.include?(marker_class.to_sym)
+              if JPEG::Markers.constants.include?(marker_class.to_s)
                   return JPEG::Markers.const_get(marker_class).new(type, data)
               else
                 if !@@missing.include?(type)

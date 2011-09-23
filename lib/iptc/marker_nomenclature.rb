@@ -22,16 +22,7 @@ module IPTC
     
     def populate
       @markers = {}
-      begin
-        fullpath = nil
-        
-        [File.dirname(__FILE__), $:].flatten.each { |path|
-          break if File.exists?(fullpath = File.join(path, "iptc"))
-        }
-        content = File.open(fullpath).sysread(100000)
-      rescue Exception=>e
-        raise "Load failed for #{fullpath}\nWith $:=#{$:.inspect}\n\n"+e
-      end
+
       marker = Struct.new(:iid, :name, :description)
       
       m = marker.new
@@ -39,7 +30,7 @@ module IPTC
       m.iid = -1
       @markers[-1] = m
               
-      content.each_line do |line|
+      NOMENCLATURE.each_line do |line|
           m = marker.new
           m[:name], m[:description], m[:iid] = line.split(/\t/)
           m[:iid] = m[:iid].to_i

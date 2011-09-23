@@ -6,7 +6,7 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Pierre Baillet", "Jens Kraemer"]
   s.email       = ["pierre@baillet.name"]
-  s.homepage    = "http://github.com/jkraemer/ruby-iptc"
+  s.homepage    = "http://github.com/octplane/ruby-iptc"
   s.summary     = "Pure ruby IPTC metadata reader"
   s.description = "Original code from http://raa.ruby-lang.org/project/jpeg-jfif-iptc/, gemified and updated by Jens Kraemer, Futher fixes by Pierre Baillet"
 
