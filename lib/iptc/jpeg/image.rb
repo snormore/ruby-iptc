@@ -6,25 +6,40 @@ require 'iptc/jpeg/marker_headers'
 module IPTC
   module JPEG
     class Image
+      # Array of MultipleHashItem objects
       attr_reader :values
-      def initialize_from_blob blob, quick=true
-        
 
+      # creates a JPEG image from a data blob and does a "quick" load (Only the metadata
+      # are loaded, not the whole file).      
+      def Image.from_blob blob, quick=true
+        return Image.new("Data blob", blob, true)
       end
       # creates a JPEG image from a file and does a "quick" load (Only the metadata
       # are loaded, not the whole file).
-      def initialize filename, quick=true
+      def Image.from_file filename, quick=true
+        content = nil
+        raise "File #{filename} not found" if !File.exists?(filename)
+        File.open(filename) do |f|
+          f.binmode
+          content = f.read
+        end
+        return Image.new(filename, content, quick)        
+
+      end
+      # Real constructor. Should never be called directly
+      # take a "data name" that is used for error reporting.
+      def initialize data_name, content, quick=true
         @logger = Logger.new(STDOUT)
         @logger.datetime_format = "%H:%M:%S"
         @logger.level = Logger::DEBUG # $DEBUG?(Logger::DEBUG):(Logger::INFO)
       
-        @filename = filename
+        @data_name = data_name
+        @content = content
+
         @position = 0
-        @content = File.open(@filename).binmode.read
-      
       
         if MARKERS[read(2)]!="SOI"
-          raise  NotJPEGFileException.new("Not a JPEG file: #{@filename}")
+          raise  NotJPEGFileException.new("Not JPEG data: #{@data_name}")
         end
       
         @markers = Array.new()
@@ -38,7 +53,7 @@ module IPTC
           end
         
         rescue Exception=>e
-          @logger.info "Exception in file #{@filename}:\n"+e.to_s
+          @logger.info "Exception in data #{@data_name}:\n"+e.to_s
           raise e
         end
         # Markers all read
@@ -73,8 +88,8 @@ module IPTC
       end
     
       # write the image to the disk
-      def write filename
-        f = File.open(filename,"wb+")
+      def write data_name
+        f = File.open(data_name,"wb+")
         f.print "\xFF\xD8"
       
         @markers.each do |marker|
@@ -99,7 +114,7 @@ module IPTC
         return Marker.new("BIN",rest)
       end
 			def to_s
-				"Image #{@filename}:\n" +
+				"Image #{@data_name}:\n" +
 				@markers.map{ |m| m.to_s  }.join("\n")
 			end
     
