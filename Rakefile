@@ -12,6 +12,7 @@ end
 
 gemspec = eval(File.read("iptc.gemspec"))
 
+desc "buidl the gem"
 task :build => "#{gemspec.full_name}.gem"
 
 file "#{gemspec.full_name}.gem" => gemspec.files + ["iptc.gemspec"] do
