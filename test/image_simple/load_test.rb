@@ -12,7 +12,6 @@ class Image_Test < Test::Unit::TestCase
     folder_name = File.dirname(__FILE__)
     data = File.open( File.join(folder_name, 'flickr-2662825452-original.jpg' )).binmode.read
     i = IPTC::JPEG::Image.from_blob( data )
-    assert_equal(58, IPTC::MarkerNomenclature.instance.markers_count)
   end
 end
 

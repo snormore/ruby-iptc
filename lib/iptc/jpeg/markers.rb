@@ -22,8 +22,9 @@ module IPTC
       class APP1Marker < Marker
         def valid?
           xap = 'http://ns.adobe.com/xap/1.0/'
+          xmp = "XMP\000://ns.adobe.com/xap/1.0/"
           header = read(xap.size)
-          return header == xap || header.start_with?("Exif\0\0")
+          return header == xap || header.start_with?("Exif\0\0") || header == xmp
         end
       end
       # == COMMarker
