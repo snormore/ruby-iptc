@@ -31,7 +31,7 @@ module IPTC
       def initialize data_name, content, quick=true
         @logger = Logger.new(STDOUT)
         @logger.datetime_format = "%H:%M:%S"
-        @logger.level = Logger::DEBUG # $DEBUG?(Logger::DEBUG):(Logger::INFO)
+        @logger.level = $DEBUG?(Logger::DEBUG):(Logger::INFO)
       
         @data_name = data_name
         @content = content
