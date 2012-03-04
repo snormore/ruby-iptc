@@ -1,3 +1,5 @@
+# -*- coding: binary -*-
+
 module IPTC
   module JPEG
       MARKERS = {
