@@ -9,3 +9,5 @@ The IPTC library parses the APP13 JPEG Tag and generates a hash of properties fo
 
 Original code from http://raa.ruby-lang.org/project/jpeg-jfif-iptc/
 Gemified, reorganized and modified in 2010 by Jens Kraemer.
+
+Ownership retaken from Github in 2011 by Pierre Baillet.

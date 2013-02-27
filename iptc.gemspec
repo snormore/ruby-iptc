@@ -4,7 +4,7 @@ Gem::Specification.new do |s|
   s.name        = "iptc"
   s.version     = IPTC::VERSION
   s.platform    = Gem::Platform::RUBY
-  s.authors     = ["Pierre Baillet", "Jens Kraemer"]
+  s.authors     = ["Pierre Baillet", "Jens Kraemer", "Tristan Bartement"]
   s.email       = ["pierre@baillet.name"]
   s.homepage    = "http://github.com/octplane/ruby-iptc"
   s.summary     = "Pure ruby IPTC metadata reader"

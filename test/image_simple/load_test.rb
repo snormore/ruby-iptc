@@ -26,7 +26,7 @@ class Image3_Test < Test::Unit::TestCase
   def test_file_loading
     folder_name = File.dirname(__FILE__)
     i = IPTC::JPEG::Image.from_file( File.join(folder_name, 'damienroue-RVPqvfAr5N0-original.jpg' ) )
-    raise i.values.keys.inspect
+    assert_equal(9, i.values.keys.count)
   end
 end
 
