@@ -22,4 +22,11 @@ class Image2_Test < Test::Unit::TestCase
   end
 end
 
+class Image3_Test < Test::Unit::TestCase
+  def test_file_loading
+    folder_name = File.dirname(__FILE__)
+    i = IPTC::JPEG::Image.from_file( File.join(folder_name, 'damienroue-RVPqvfAr5N0-original.jpg' ) )
+    raise i.values.keys.inspect
+  end
+end
 

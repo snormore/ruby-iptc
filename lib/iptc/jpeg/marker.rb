@@ -12,7 +12,7 @@ module IPTC
         
           # The NewMarker constructor method.
           # Inspect the object space in order to find something usable later
-          def Marker.NewMarker(type,data, logger)
+          def Marker.NewMarker(type, data, logger)
             marker_class = "#{type}Marker"
               if JPEG::Markers.constants.include?(marker_class.to_sym)
                   return JPEG::Markers.const_get(marker_class).new(type, data)
@@ -39,7 +39,7 @@ module IPTC
               end
           end
 
-          def initialize(type,data)
+          def initialize(type, data)
               @logger = Logger.new(STDOUT)
               @logger.datetime_format = "%H:%M:%S"
               @logger.level = $DEBUG?(Logger::DEBUG):(Logger::INFO)

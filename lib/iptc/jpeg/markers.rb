@@ -43,7 +43,7 @@ module IPTC
       # See also the IPTC::MarkerNomenclature.
       class APP13Marker < Marker
         def initialize(type, data)
-          @header = "Photoshop 3.0\0008BIM"
+          @header = "Photoshop 3.0\000"
 
           super(type, data)
           @prefix = "iptc"
@@ -53,45 +53,86 @@ module IPTC
           return read(@header.length)==@header
         end
 
+        SHORT = 1
+        WORD = 2
+        LONG = 4
+
+        def word
+          read(WORD).unpack("n")[0]
+        end
+        def long
+          read(LONG).unpack("N")[0]
+        end
+
         def parse
           l "APP13 marker parsed"
-          @markers = Array.new        
+          @markers = Array.new
 
+          # http://www.fileformat.info/format/psd/egff.htm
+          # this one is much up to date.
 
-          @bim_type = read(2)
-          @bim_dummy = read(4)
-          size = read(2)
+          while @content.pos < @content.length - 1
+            l @content.pos
+            l @content.length
 
-          content = StringIO.new(read(size.unpack('n')[0]))
+            eight_bim = read(LONG)
+            l eight_bim
+            raise "Not a 8BIM packet(#{eight_bim.inspect} #{read(10)}" if eight_bim != "8BIM"
+            @bim_type = word()
 
-          while !content.eof?
+            # Read name length and normalize to even number of bytes
+            # Weird, always read 4 bytes
+            padding = read(4)
+            size = word()
 
-            header = content.read(2)
+            size += 1 if size % 2 == 1
+            next_block = read(size)
+            next
 
-            # http://www.sno.phy.queensu.ca/~phil/exiftool/TagNames/IPTC.html
-            case header
-            when "\x1c\x01"
-              # skip the envelope
+            # http://www.sno.phy.queensu.ca/~phil/exiftool/TagNames/Photoshop.html
+            case @bim_type 
+            when 0x03ED
+              hRes = long()
+              hResUnit = word()
+              widthUnit = word()
+              vRes = long()
+              vResUnit = word()
+              heightUnit = word()
+
+            when 0x0404 # IPTC
+              content = StringIO.new(read(size))
+              l content
+
               while !content.eof?
-                if content.read(1) == "\x1c"
-                  content.pos = content.pos - 1
-                  break
+
+                header = content.read(2).unpack("n")[0]
+
+                # http://www.sno.phy.queensu.ca/~phil/exiftool/TagNames/IPTC.html
+                case header
+                when 0x1C01
+                  # skip the envelope
+                  while !content.eof?
+                    if content.read(1) == "\x1c"
+                      content.pos = content.pos - 1
+                      break
+                    end
+                  end
+                when 0x1C02
+
+                  type = content.read(1).unpack('c')[0]
+                  size = content.read(2)
+                  value = content.read(size.unpack('n')[0])
+
+                  l "Found marker #{type}"
+                  marker = IPTC::Marker.new(type, value)
+                  @values[@prefix+"/"+IPTC::MarkerNomenclature.markers(type.to_i).name] ||= []
+                  @values[@prefix+"/"+IPTC::MarkerNomenclature.markers(type.to_i).name] << value
+                  @markers << marker
+
+                else
+                  # raise InvalidBlockException.new("Invalid BIM segment #{header.inspect} in marker\n#{@original_content.inspect}")
                 end
-              end
-            when "\x1c\x02"
-
-              type = content.read(1).unpack('c')[0]
-              size = content.read(2)
-              value = content.read(size.unpack('n')[0])
-
-              l "Found marker #{type}"
-              marker = IPTC::Marker.new(type, value)
-              @values[@prefix+"/"+IPTC::MarkerNomenclature.markers(type.to_i).name] ||= []
-              @values[@prefix+"/"+IPTC::MarkerNomenclature.markers(type.to_i).name] << value
-              @markers << marker
-
-            else
-              # raise InvalidBlockException.new("Invalid BIM segment #{header.inspect} in marker\n#{@original_content.inspect}")
+              end          
             end
           end
           return @values
