@@ -83,25 +83,13 @@ module IPTC
             # Read name length and normalize to even number of bytes
             # Weird, always read 4 bytes
             padding = read(4)
-            size = word()
-
-            size += 1 if size % 2 == 1
-            next_block = read(size)
-            next
+            bim_size = word()
 
             # http://www.sno.phy.queensu.ca/~phil/exiftool/TagNames/Photoshop.html
             case @bim_type 
-            when 0x03ED
-              hRes = long()
-              hResUnit = word()
-              widthUnit = word()
-              vRes = long()
-              vResUnit = word()
-              heightUnit = word()
 
             when 0x0404 # IPTC
-              content = StringIO.new(read(size))
-              l content
+              content = StringIO.new(read(bim_size))
 
               while !content.eof?
 
@@ -132,8 +120,18 @@ module IPTC
                 else
                   # raise InvalidBlockException.new("Invalid BIM segment #{header.inspect} in marker\n#{@original_content.inspect}")
                 end
-              end          
+              end
+            when 0x03ED
+              hRes = long()
+              hResUnit = word()
+              widthUnit = word()
+              vRes = long()
+              vResUnit = word()
+              heightUnit = word()
+            else
+              read(bim_size)
             end
+            read(1) if bim_size%2 == 1
           end
           return @values
         end
