@@ -31,6 +31,9 @@ module IPTC
         end
       end
     end
+    def keys
+      return @internal.keys
+    end
     def each
       @internal.each do |key, values|
         values.each do |value|
