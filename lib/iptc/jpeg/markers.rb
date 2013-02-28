@@ -72,12 +72,15 @@ module IPTC
           # this one is much up to date.
 
           while @content.pos < @content.length - 1
-            l @content.pos
-            l @content.length
 
             eight_bim = read(LONG)
-            l eight_bim
-            raise "Not a 8BIM packet(#{eight_bim.inspect} #{read(10)}" if eight_bim != "8BIM"
+            # Not a 8BIM packet. Go away !
+
+            if eight_bim != "8BIM"
+              l "At #{@content.pos}/#{@content.length} we were unable to find an 8BIM marker (#{eight_bim})."
+              return
+            end
+
             @bim_type = word()
 
             # Read name length and normalize to even number of bytes
@@ -111,7 +114,7 @@ module IPTC
                   size = content.read(2)
                   value = content.read(size.unpack('n')[0])
 
-                  l "Found marker #{type}"
+                  l "Found marker 0x#{type.to_s(16)}"
                   marker = IPTC::Marker.new(type, value)
                   @values[@prefix+"/"+IPTC::MarkerNomenclature.markers(type.to_i).name] ||= []
                   @values[@prefix+"/"+IPTC::MarkerNomenclature.markers(type.to_i).name] << value
