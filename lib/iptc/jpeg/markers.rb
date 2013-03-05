@@ -116,8 +116,16 @@ module IPTC
 
                   l "Found marker 0x#{type.to_s(16)}"
                   marker = IPTC::Marker.new(type, value)
-                  @values[@prefix+"/"+IPTC::MarkerNomenclature.markers(type.to_i).name] ||= []
-                  @values[@prefix+"/"+IPTC::MarkerNomenclature.markers(type.to_i).name] << value
+                  k = @prefix+"/"+IPTC::MarkerNomenclature.markers(type.to_i).name
+                  if @values.has_key?(k)
+                    if @values[k].is_a?(Array)
+                      @values[k] << value
+                    else
+                      @values[k] = [@values[k], value]
+                    end
+                  else
+                      @values[k] = value
+                  end
                   @markers << marker
 
                 else
