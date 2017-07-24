@@ -3,7 +3,6 @@
 module IPTC
   module JPEG
       MARKERS = {
-          "\xFF\xD8" => 'SOI',
           "\xFF\xc0" => 'SOF0',
           "\xFF\xc1" => 'SOF1',
           "\xFF\xc2" => 'SOF2',
